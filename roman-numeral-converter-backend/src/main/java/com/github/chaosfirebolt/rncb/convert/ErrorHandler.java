@@ -13,10 +13,11 @@ public class ErrorHandler {
 
   private final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
 
-  @ExceptionHandler(NumberFormatException.class)
-  public ResponseEntity<ProblemDetail> invalidFormatHandler(NumberFormatException exc) {
-    logger.error("Invalid format for conversion", exc);
-    ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid input format");
+  @ExceptionHandler(ConversionException.class)
+  public ResponseEntity<ProblemDetail> invalidFormatHandler(ConversionException exc) {
+    String errorMessage = "Unable to convert input to roman numeral";
+    logger.error("{} - {}", errorMessage, exc.getMessage());
+    ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, errorMessage);
     return ResponseEntity.of(problemDetail).build();
   }
 }
