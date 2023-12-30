@@ -19,4 +19,20 @@ public class ApplicationRequest extends BaseEntity<Long> {
   @ManyToOne(optional = false)
   @JoinColumn(name = "application_id", nullable = false, updatable = false)
   private Application madeBy;
+
+  public Instant getMadeAt() {
+    return madeAt;
+  }
+
+  public void setMadeAt(Instant madeAt) {
+    this.madeAt = madeAt;
+  }
+
+  public Application getMadeBy() {
+    return madeBy;
+  }
+
+  public void setMadeBy(Application madeBy) {
+    this.madeBy = madeBy;
+  }
 }
