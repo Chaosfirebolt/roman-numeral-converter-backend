@@ -1,13 +1,17 @@
 package com.github.chaosfirebolt.rncb.app;
 
+import com.github.chaosfirebolt.rncb.persist.BaseEntity;
+import com.github.chaosfirebolt.rncb.request.ApplicationRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import org.springframework.data.jpa.domain.AbstractPersistable;
+
+import java.util.List;
 
 @Entity
 @Table(name = "applications")
-public class Application extends AbstractPersistable<Long> {
+public class Application extends BaseEntity<Long> {
 
   @Column(name = "app_id", unique = true, nullable = false, updatable = false)
   private String applicationId;
@@ -17,6 +21,8 @@ public class Application extends AbstractPersistable<Long> {
   private Integer limitPerMinute;
   @Column(name = "limit_per_hour", nullable = false)
   private Integer limitPerHour;
+  @OneToMany(mappedBy = "madeBy")
+  private List<ApplicationRequest> requests;
 
   public String getApplicationId() {
     return applicationId;
@@ -48,5 +54,13 @@ public class Application extends AbstractPersistable<Long> {
 
   public void setLimitPerHour(Integer limitPerHour) {
     this.limitPerHour = limitPerHour;
+  }
+
+  public List<ApplicationRequest> getRequests() {
+    return requests;
+  }
+
+  public void setRequests(List<ApplicationRequest> requests) {
+    this.requests = requests;
   }
 }
