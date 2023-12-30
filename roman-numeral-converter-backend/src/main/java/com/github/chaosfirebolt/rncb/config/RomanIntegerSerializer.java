@@ -16,8 +16,8 @@ class RomanIntegerSerializer extends StdSerializer<RomanInteger> {
   @Override
   public void serialize(RomanInteger value, JsonGenerator generator, SerializerProvider provider) throws IOException {
     generator.writeStartObject();
-    generator.writeStringField("rom", value.getRoman());
-    generator.writeNumberField("arab", value.getArabic());
+    generator.writeStringField("r", value.getRoman());
+    generator.writeNumberField("a", value.getArabic());
     generator.writeEndObject();
   }
 }
