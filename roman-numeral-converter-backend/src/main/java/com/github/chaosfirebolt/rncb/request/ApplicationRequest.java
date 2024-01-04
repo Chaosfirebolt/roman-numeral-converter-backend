@@ -12,6 +12,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "application_requests")
+//TODO add index for made_at!
 public class ApplicationRequest extends BaseEntity<Long> {
 
   @Column(name = "made_at", nullable = false, updatable = false)
