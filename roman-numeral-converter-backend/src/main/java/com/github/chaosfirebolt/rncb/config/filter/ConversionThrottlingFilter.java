@@ -1,9 +1,9 @@
 package com.github.chaosfirebolt.rncb.config.filter;
 
 import com.github.chaosfirebolt.rncb.storage.RequestStorage;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.Clock;
-import java.time.Instant;
 
 public class ConversionThrottlingFilter extends ThrottlingFilter {
   
@@ -12,12 +12,7 @@ public class ConversionThrottlingFilter extends ThrottlingFilter {
   }
 
   @Override
-  protected boolean isMinuteLimitReached(Instant startTime, Instant endTime) {
-    return false;
-  }
-
-  @Override
-  protected boolean isHourLimitReached(Instant startTime, Instant endTime) {
-    return false;
+  protected String identifyClient(HttpServletRequest request) {
+    return null;
   }
 }
