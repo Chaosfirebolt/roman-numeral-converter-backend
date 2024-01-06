@@ -4,6 +4,7 @@ import com.github.chaosfirebolt.rncb.app.Application;
 import com.github.chaosfirebolt.rncb.persist.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -11,8 +12,7 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 
 @Entity
-@Table(name = "application_requests")
-//TODO add index for made_at!
+@Table(name = "application_requests", indexes = @Index(columnList = "made_at"))
 public class ApplicationRequest extends BaseEntity<Long> {
 
   @Column(name = "made_at", nullable = false, updatable = false)
