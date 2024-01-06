@@ -1,9 +1,9 @@
 package com.github.chaosfirebolt.rncb.config.filter;
 
 import com.github.chaosfirebolt.rncb.request.RequestLimit;
-import com.github.chaosfirebolt.rncb.storage.time.HourRange;
-import com.github.chaosfirebolt.rncb.storage.time.MinuteRange;
 import com.github.chaosfirebolt.rncb.storage.RequestStorage;
+import com.github.chaosfirebolt.rncb.storage.time.TimeRange;
+import com.github.chaosfirebolt.rncb.storage.time.TimeRangeFactory;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,16 +14,18 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 
 abstract class ThrottlingFilter extends OncePerRequestFilter {
 
   private final Clock clock;
   private final RequestStorage requestStorage;
-  //TODO list of time range factories
+  private final List<TimeRangeFactory> factories;
 
-  protected ThrottlingFilter(Clock clock, RequestStorage requestStorage) {
+  protected ThrottlingFilter(Clock clock, RequestStorage requestStorage, List<TimeRangeFactory> factories) {
     this.clock = clock;
     this.requestStorage = requestStorage;
+    this.factories = factories;
   }
 
   @Override
@@ -31,16 +33,14 @@ abstract class ThrottlingFilter extends OncePerRequestFilter {
     Instant now = Instant.now(clock);
     String identifier = identifyClient(request);
 
-    RequestLimit perMinuteLimit = requestStorage.extract(identifier, new MinuteRange(now));
-    if (perMinuteLimit.isReached()) {
-      setTooManyRequestResponse(response);
-      return;
-    }
-
-    RequestLimit perHourLimit = requestStorage.extract(identifier, new HourRange(now));
-    if (perHourLimit.isReached()) {
-      setTooManyRequestResponse(response);
-      return;
+    for (TimeRangeFactory factory : factories) {
+      TimeRange testRange = factory.create(now);
+      RequestLimit requestLimit = requestStorage.extract(identifier, testRange);
+      if (requestLimit.isReached()) {
+        HttpStatus tooManyRequests = HttpStatus.TOO_MANY_REQUESTS;
+        response.sendError(tooManyRequests.value(), tooManyRequests.getReasonPhrase());
+        return;
+      }
     }
 
     requestStorage.store(identifier);
@@ -48,9 +48,4 @@ abstract class ThrottlingFilter extends OncePerRequestFilter {
   }
 
   protected abstract String identifyClient(HttpServletRequest request);
-
-  private void setTooManyRequestResponse(HttpServletResponse response) throws IOException {
-    HttpStatus tooManyRequests = HttpStatus.TOO_MANY_REQUESTS;
-    response.sendError(tooManyRequests.value(), tooManyRequests.getReasonPhrase());
-  }
 }
