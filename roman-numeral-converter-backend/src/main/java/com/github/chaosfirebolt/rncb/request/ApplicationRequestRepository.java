@@ -5,16 +5,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
-import java.util.List;
 
 @Repository
 public interface ApplicationRequestRepository extends JpaRepository<ApplicationRequest, Long> {
 
   @Query("""
-          SELECT ar
+          SELECT COUNT(ar)
             FROM ApplicationRequest AS ar
-            WHERE ar.madeBy = :applicationId
+            WHERE ar.madeBy.id = :appId
             AND ar.madeAt BETWEEN :start AND :end
           """)
-  List<ApplicationRequest> findByAppIdAndMadeAtRange(Long applicationId, Instant start, Instant end);
+  int findRequestCountByAppIdAndTimeRange(Long appId, Instant start, Instant end);
 }
