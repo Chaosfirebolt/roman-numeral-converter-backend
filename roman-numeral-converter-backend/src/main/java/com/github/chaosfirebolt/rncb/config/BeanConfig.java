@@ -6,6 +6,7 @@ import com.github.chaosfirebolt.generator.identifier.api.string.RandomUuidString
 import com.github.chaosfirebolt.generator.identifier.api.string.builders.StringGeneratorBuilders;
 import com.github.chaosfirebolt.rncb.config.filter.ConversionThrottlingFilter;
 import com.github.chaosfirebolt.rncb.config.filter.RegistrationThrottlingFilter;
+import com.github.chaosfirebolt.rncb.storage.RequestStorage;
 import com.github.chaosfirebolt.rncb.storage.time.HourRange;
 import com.github.chaosfirebolt.rncb.storage.time.MinuteRange;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRangeFactory;
@@ -54,23 +55,21 @@ public class BeanConfig {
     return Clock.systemUTC();
   }
 
-  @Bean
-  public FilterRegistrationBean<RegistrationThrottlingFilter> registrationThrottlingFilter() {
+  public FilterRegistrationBean<RegistrationThrottlingFilter> registrationThrottlingFilter(Clock appClock, RequestStorage requestStorage, List<TimeRangeFactory> factories) {
     //TODO finish!!!
     FilterRegistrationBean<RegistrationThrottlingFilter> registrationBean = new FilterRegistrationBean<>();
 
-    registrationBean.setFilter(null);
+    registrationBean.setFilter(new RegistrationThrottlingFilter(appClock, requestStorage, factories));
     registrationBean.addUrlPatterns("/app/register");
 
     return registrationBean;
   }
 
-  @Bean
-  public FilterRegistrationBean<ConversionThrottlingFilter> conversionThrottlingFilter() {
+  public FilterRegistrationBean<ConversionThrottlingFilter> conversionThrottlingFilter(Clock appClock, RequestStorage requestStorage, List<TimeRangeFactory> factories) {
     //TODO finish!!!
     FilterRegistrationBean<ConversionThrottlingFilter> registrationBean = new FilterRegistrationBean<>();
 
-    registrationBean.setFilter(null);
+    registrationBean.setFilter(new ConversionThrottlingFilter(appClock, requestStorage, factories));
     registrationBean.addUrlPatterns("/convert");
 
     return registrationBean;
