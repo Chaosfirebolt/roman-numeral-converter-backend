@@ -10,6 +10,8 @@ import com.github.chaosfirebolt.rncb.storage.RequestStorage;
 import com.github.chaosfirebolt.rncb.storage.time.HourRange;
 import com.github.chaosfirebolt.rncb.storage.time.MinuteRange;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRangeFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -55,8 +57,10 @@ public class BeanConfig {
     return Clock.systemUTC();
   }
 
-  public FilterRegistrationBean<RegistrationThrottlingFilter> registrationThrottlingFilter(Clock appClock, RequestStorage requestStorage, List<TimeRangeFactory> factories) {
-    //TODO finish!!!
+  @Bean
+  @Autowired
+  public FilterRegistrationBean<RegistrationThrottlingFilter> registrationThrottlingFilter(Clock appClock, @Qualifier("reg-storage") RequestStorage requestStorage,
+                                                                                           List<TimeRangeFactory> factories) {
     FilterRegistrationBean<RegistrationThrottlingFilter> registrationBean = new FilterRegistrationBean<>();
 
     registrationBean.setFilter(new RegistrationThrottlingFilter(appClock, requestStorage, factories));
@@ -65,8 +69,10 @@ public class BeanConfig {
     return registrationBean;
   }
 
-  public FilterRegistrationBean<ConversionThrottlingFilter> conversionThrottlingFilter(Clock appClock, RequestStorage requestStorage, List<TimeRangeFactory> factories) {
-    //TODO finish!!!
+  @Bean
+  @Autowired
+  public FilterRegistrationBean<ConversionThrottlingFilter> conversionThrottlingFilter(Clock appClock, @Qualifier("app-storage") RequestStorage requestStorage,
+                                                                                       List<TimeRangeFactory> factories) {
     FilterRegistrationBean<ConversionThrottlingFilter> registrationBean = new FilterRegistrationBean<>();
 
     registrationBean.setFilter(new ConversionThrottlingFilter(appClock, requestStorage, factories));

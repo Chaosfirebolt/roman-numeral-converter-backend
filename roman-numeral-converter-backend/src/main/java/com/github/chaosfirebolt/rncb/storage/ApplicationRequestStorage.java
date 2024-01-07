@@ -6,15 +6,19 @@ import com.github.chaosfirebolt.rncb.request.ApplicationRequest;
 import com.github.chaosfirebolt.rncb.request.ApplicationRequestRepository;
 import com.github.chaosfirebolt.rncb.limit.RequestLimit;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRange;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.Instant;
 
+@Service("app-storage")
 public class ApplicationRequestStorage extends BaseRequestStorage {
 
   private final ApplicationRepository applicationRepository;
   private final ApplicationRequestRepository requestRepository;
 
+  @Autowired
   public ApplicationRequestStorage(Clock clock, ApplicationRepository applicationRepository, ApplicationRequestRepository requestRepository) {
     super(clock);
     this.applicationRepository = applicationRepository;

@@ -37,8 +37,7 @@ abstract class ThrottlingFilter extends OncePerRequestFilter {
       TimeRange testRange = factory.create(now);
       RequestLimit requestLimit = requestStorage.extract(identifier, testRange);
       if (requestLimit.isReached()) {
-        HttpStatus tooManyRequests = HttpStatus.TOO_MANY_REQUESTS;
-        response.sendError(tooManyRequests.value(), tooManyRequests.getReasonPhrase());
+        response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
         return;
       }
     }

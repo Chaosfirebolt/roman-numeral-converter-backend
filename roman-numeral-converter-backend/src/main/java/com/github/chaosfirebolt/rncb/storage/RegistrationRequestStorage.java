@@ -3,6 +3,8 @@ package com.github.chaosfirebolt.rncb.storage;
 import com.github.chaosfirebolt.rncb.limit.Limitation;
 import com.github.chaosfirebolt.rncb.limit.RequestLimit;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRange;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -12,12 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service("reg-storage")
 public class RegistrationRequestStorage extends BaseRequestStorage {
 
   private static final Limitation REGISTRATION_LIMITATION = new RegistrationLimitation(1, 10);
 
   private final Map<String, List<Instant>> storage;
 
+  @Autowired
   public RegistrationRequestStorage(Clock clock) {
     super(clock);
     this.storage = Collections.synchronizedMap(new HashMap<>());
