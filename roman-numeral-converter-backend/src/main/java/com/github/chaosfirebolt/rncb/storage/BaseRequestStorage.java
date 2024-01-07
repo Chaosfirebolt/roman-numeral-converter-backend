@@ -5,7 +5,7 @@ import java.time.Instant;
 
 abstract class BaseRequestStorage implements RequestStorage {
 
-  private final Clock clock;
+  protected final Clock clock;
 
   BaseRequestStorage(Clock clock) {
     this.clock = clock;
