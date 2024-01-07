@@ -1,5 +1,7 @@
 package com.github.chaosfirebolt.rncb.config.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.chaosfirebolt.rncb.io.ErrorResponse;
 import com.github.chaosfirebolt.rncb.limit.RequestLimit;
 import com.github.chaosfirebolt.rncb.storage.RequestStorage;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRange;
@@ -21,11 +23,13 @@ abstract class ThrottlingFilter extends OncePerRequestFilter {
   private final Clock clock;
   private final RequestStorage requestStorage;
   private final List<TimeRangeFactory> factories;
+  private final ObjectMapper mapper;
 
-  protected ThrottlingFilter(Clock clock, RequestStorage requestStorage, List<TimeRangeFactory> factories) {
+  protected ThrottlingFilter(Clock clock, RequestStorage requestStorage, List<TimeRangeFactory> factories, ObjectMapper mapper) {
     this.clock = clock;
     this.requestStorage = requestStorage;
     this.factories = factories;
+    this.mapper = mapper;
   }
 
   @Override
@@ -37,7 +41,9 @@ abstract class ThrottlingFilter extends OncePerRequestFilter {
       TimeRange testRange = factory.create(now);
       RequestLimit requestLimit = requestStorage.extract(identifier, testRange);
       if (requestLimit.isReached()) {
-        response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+        HttpStatus status = HttpStatus.TOO_MANY_REQUESTS;
+        response.setStatus(status.value());
+        mapper.writeValue(response.getWriter(), ErrorResponse.create(status.getReasonPhrase()));
         return;
       }
     }

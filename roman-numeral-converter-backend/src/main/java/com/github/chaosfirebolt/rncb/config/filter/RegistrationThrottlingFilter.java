@@ -1,5 +1,6 @@
 package com.github.chaosfirebolt.rncb.config.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.chaosfirebolt.rncb.storage.RequestStorage;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRangeFactory;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,8 +12,8 @@ public class RegistrationThrottlingFilter extends ThrottlingFilter {
 
   private static final String DEFAULT_IDENTIFICATION = "UNKNOWN";
 
-  public RegistrationThrottlingFilter(Clock appClock, RequestStorage requestStorage, List<TimeRangeFactory> factories) {
-    super(appClock, requestStorage, factories);
+  public RegistrationThrottlingFilter(Clock appClock, RequestStorage requestStorage, List<TimeRangeFactory> factories, ObjectMapper mapper) {
+    super(appClock, requestStorage, factories, mapper);
   }
 
   @Override

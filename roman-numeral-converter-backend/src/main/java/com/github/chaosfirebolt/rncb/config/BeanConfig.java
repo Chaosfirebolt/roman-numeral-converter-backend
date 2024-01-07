@@ -1,6 +1,7 @@
 package com.github.chaosfirebolt.rncb.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.chaosfirebolt.generator.identifier.api.IdentifierGenerator;
 import com.github.chaosfirebolt.generator.identifier.api.string.RandomUuidStringIdentifierGenerator;
 import com.github.chaosfirebolt.generator.identifier.api.string.builders.StringGeneratorBuilders;
@@ -60,10 +61,10 @@ public class BeanConfig {
   @Bean
   @Autowired
   public FilterRegistrationBean<RegistrationThrottlingFilter> registrationThrottlingFilter(Clock appClock, @Qualifier("reg-storage") RequestStorage requestStorage,
-                                                                                           List<TimeRangeFactory> factories) {
+                                                                                           List<TimeRangeFactory> factories, ObjectMapper mapper) {
     FilterRegistrationBean<RegistrationThrottlingFilter> registrationBean = new FilterRegistrationBean<>();
 
-    registrationBean.setFilter(new RegistrationThrottlingFilter(appClock, requestStorage, factories));
+    registrationBean.setFilter(new RegistrationThrottlingFilter(appClock, requestStorage, factories, mapper));
     registrationBean.addUrlPatterns("/app/register");
 
     return registrationBean;
@@ -72,10 +73,10 @@ public class BeanConfig {
   @Bean
   @Autowired
   public FilterRegistrationBean<ConversionThrottlingFilter> conversionThrottlingFilter(Clock appClock, @Qualifier("app-storage") RequestStorage requestStorage,
-                                                                                       List<TimeRangeFactory> factories) {
+                                                                                       List<TimeRangeFactory> factories, ObjectMapper mapper) {
     FilterRegistrationBean<ConversionThrottlingFilter> registrationBean = new FilterRegistrationBean<>();
 
-    registrationBean.setFilter(new ConversionThrottlingFilter(appClock, requestStorage, factories));
+    registrationBean.setFilter(new ConversionThrottlingFilter(appClock, requestStorage, factories, mapper));
     registrationBean.addUrlPatterns("/convert");
 
     return registrationBean;
