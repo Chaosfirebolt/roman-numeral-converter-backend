@@ -1,4 +1,4 @@
-package com.github.chaosfirebolt.rncb.request.limit;
+package com.github.chaosfirebolt.rncb.limit;
 
 @FunctionalInterface
 public interface RequestLimitFactory {

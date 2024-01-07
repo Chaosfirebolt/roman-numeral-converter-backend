@@ -1,6 +1,6 @@
 package com.github.chaosfirebolt.rncb.config.filter;
 
-import com.github.chaosfirebolt.rncb.request.limit.RequestLimit;
+import com.github.chaosfirebolt.rncb.limit.RequestLimit;
 import com.github.chaosfirebolt.rncb.storage.RequestStorage;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRange;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRangeFactory;

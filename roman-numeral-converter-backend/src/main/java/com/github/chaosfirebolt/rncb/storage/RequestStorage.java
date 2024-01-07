@@ -1,6 +1,6 @@
 package com.github.chaosfirebolt.rncb.storage;
 
-import com.github.chaosfirebolt.rncb.request.limit.RequestLimit;
+import com.github.chaosfirebolt.rncb.limit.RequestLimit;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRange;
 
 public interface RequestStorage {

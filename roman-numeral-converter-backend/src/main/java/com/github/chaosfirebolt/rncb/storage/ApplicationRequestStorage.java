@@ -4,7 +4,7 @@ import com.github.chaosfirebolt.rncb.app.Application;
 import com.github.chaosfirebolt.rncb.app.ApplicationRepository;
 import com.github.chaosfirebolt.rncb.request.ApplicationRequest;
 import com.github.chaosfirebolt.rncb.request.ApplicationRequestRepository;
-import com.github.chaosfirebolt.rncb.request.limit.RequestLimit;
+import com.github.chaosfirebolt.rncb.limit.RequestLimit;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRange;
 
 import java.time.Clock;
@@ -34,6 +34,6 @@ public class ApplicationRequestStorage extends BaseRequestStorage {
   public RequestLimit extract(String identifier, TimeRange timeRange) {
     Application application = applicationRepository.findByApplicationId(identifier).orElseThrow();
     int requestCount = requestRepository.findRequestCountByAppIdAndTimeRange(application.getId(), timeRange.min(), timeRange.max());
-    return timeRange.requestLimitFactory().create(requestCount, application);
+    return timeRange.requestLimitFactory().create(requestCount, application.getRateLimit());
   }
 }

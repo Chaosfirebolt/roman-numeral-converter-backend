@@ -1,4 +1,4 @@
-package com.github.chaosfirebolt.rncb.request.limit;
+package com.github.chaosfirebolt.rncb.limit;
 
 public interface RequestLimit {
 

@@ -1,27 +1,28 @@
 package com.github.chaosfirebolt.rncb.app;
 
+import com.github.chaosfirebolt.rncb.limit.ApplicationRateLimit;
 import com.github.chaosfirebolt.rncb.persist.BaseEntity;
 import com.github.chaosfirebolt.rncb.request.ApplicationRequest;
-import com.github.chaosfirebolt.rncb.request.limit.Limitation;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.util.List;
 
 @Entity
 @Table(name = "applications")
-public class Application extends BaseEntity<Long> implements Limitation {
+public class Application extends BaseEntity<Long> {
 
   @Column(name = "app_id", unique = true, nullable = false, updatable = false)
   private String applicationId;
-  @Column(name = "app_pass", unique = true, nullable = false, updatable = false)
+  @Column(name = "app_pass", nullable = false, updatable = false)
   private String applicationPassword;
-  @Column(name = "limit_per_minute", nullable = false)
-  private int limitPerMinute;
-  @Column(name = "limit_per_hour", nullable = false)
-  private int limitPerHour;
+  @OneToOne
+  @JoinColumn(name = "rate_limit_id", referencedColumnName = "id", nullable = false)
+  private ApplicationRateLimit rateLimit;
   @OneToMany(mappedBy = "madeBy")
   private List<ApplicationRequest> requests;
 
@@ -41,20 +42,12 @@ public class Application extends BaseEntity<Long> implements Limitation {
     this.applicationPassword = applicationPassword;
   }
 
-  public int getLimitPerMinute() {
-    return limitPerMinute;
+  public ApplicationRateLimit getRateLimit() {
+    return rateLimit;
   }
 
-  public void setLimitPerMinute(int limitPerMinute) {
-    this.limitPerMinute = limitPerMinute;
-  }
-
-  public int getLimitPerHour() {
-    return limitPerHour;
-  }
-
-  public void setLimitPerHour(int limitPerHour) {
-    this.limitPerHour = limitPerHour;
+  public void setRateLimit(ApplicationRateLimit rateLimit) {
+    this.rateLimit = rateLimit;
   }
 
   public List<ApplicationRequest> getRequests() {
@@ -63,15 +56,5 @@ public class Application extends BaseEntity<Long> implements Limitation {
 
   public void setRequests(List<ApplicationRequest> requests) {
     this.requests = requests;
-  }
-
-  @Override
-  public int perMinute() {
-    return getLimitPerMinute();
-  }
-
-  @Override
-  public int perHour() {
-    return getLimitPerHour();
   }
 }
