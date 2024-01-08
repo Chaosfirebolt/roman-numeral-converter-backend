@@ -50,6 +50,7 @@ public class RegistrationRequestStorage extends BaseRequestStorage {
             .count();
     return timeRange.requestLimitFactory().create(requestCount, REGISTRATION_LIMITATION);
   }
+
   @Scheduled(initialDelay = 1, fixedRate = 1, timeUnit = TimeUnit.HOURS)
   public void cleanUpStore() {
     synchronized (storage) {
