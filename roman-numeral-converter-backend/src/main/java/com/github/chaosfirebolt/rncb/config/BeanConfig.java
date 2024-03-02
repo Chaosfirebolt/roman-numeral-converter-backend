@@ -2,11 +2,19 @@ package com.github.chaosfirebolt.rncb.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Ticker;
+import com.github.chaosfirebolt.converter.RomanInteger;
+import com.github.chaosfirebolt.converter.api.initialization.source.BasicNumeralsInputSource;
+import com.github.chaosfirebolt.converter.api.initialization.source.InputSource;
 import com.github.chaosfirebolt.generator.identifier.api.IdentifierGenerator;
 import com.github.chaosfirebolt.generator.identifier.api.string.RandomUuidStringIdentifierGenerator;
 import com.github.chaosfirebolt.generator.identifier.api.string.builders.StringGeneratorBuilders;
 import com.github.chaosfirebolt.rncb.config.filter.ConversionThrottlingFilter;
 import com.github.chaosfirebolt.rncb.config.filter.RegistrationThrottlingFilter;
+import com.github.chaosfirebolt.rncb.convert.AppClockTicker;
+import com.github.chaosfirebolt.rncb.convert.CaffeineExpiry;
 import com.github.chaosfirebolt.rncb.storage.RequestStorage;
 import com.github.chaosfirebolt.rncb.storage.time.HourRange;
 import com.github.chaosfirebolt.rncb.storage.time.MinuteRange;
@@ -22,6 +30,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.util.List;
 
 @Configuration
@@ -87,5 +96,16 @@ public class BeanConfig {
   @Bean
   public List<TimeRangeFactory> timeRangeFactories() {
     return List.of(MinuteRange::new, HourRange::new);
+  }
+
+  @Bean
+  public Cache<String, RomanInteger> caffeine(Clock appClock) {
+    InputSource<RomanInteger[]> basicNumerals = new BasicNumeralsInputSource();
+    Ticker ticker = new AppClockTicker(appClock);
+    return Caffeine.newBuilder()
+            .maximumSize(5_000)
+            .ticker(ticker)
+            .expireAfter(new CaffeineExpiry(Duration.ofSeconds(15), ticker, basicNumerals.getInputData()))
+            .build();
   }
 }
