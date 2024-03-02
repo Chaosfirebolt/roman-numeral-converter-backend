@@ -32,10 +32,11 @@ public class WebSecurityConfig {
 
 	@Bean("customCorsConfig")
 	public CorsConfigurationSource corsConfigurationSource() {
+		final String everythingAllowed = "*";
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("*"));
-		configuration.setAllowedMethods(List.of("*"));
-		configuration.setAllowedHeaders(List.of("*"));
+		configuration.setAllowedOrigins(List.of(everythingAllowed));
+		configuration.setAllowedMethods(List.of(everythingAllowed));
+		configuration.setAllowedHeaders(List.of(everythingAllowed));
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;

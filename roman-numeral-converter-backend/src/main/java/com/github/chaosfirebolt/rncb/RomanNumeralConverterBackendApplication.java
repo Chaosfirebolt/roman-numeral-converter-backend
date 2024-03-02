@@ -9,5 +9,4 @@ public class RomanNumeralConverterBackendApplication {
   public static void main(String[] args) {
     SpringApplication.run(RomanNumeralConverterBackendApplication.class, args);
   }
-
 }
