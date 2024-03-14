@@ -1,8 +1,8 @@
 package com.github.chaosfirebolt.rncb.convert;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.chaosfirebolt.converter.MapRomanIntegerCache;
 import com.github.chaosfirebolt.converter.RomanInteger;
+import com.github.chaosfirebolt.converter.UniDirectionalRomanIntegerCache;
 import com.github.chaosfirebolt.converter.api.initialization.InitializationData;
 import com.github.chaosfirebolt.converter.api.initialization.RomanIntegerArrayInitializationData;
 import com.github.chaosfirebolt.converter.api.initialization.source.BasicNumeralsInputSource;
@@ -34,7 +34,7 @@ public class ConversionService implements InitializingBean, DisposableBean {
   @Override
   public void afterPropertiesSet() {
     InitializationData<Map<String, RomanInteger>> initializationData =  new RomanIntegerArrayInitializationData(new BasicNumeralsInputSource());
-    RomanInteger.setCache(parserCache -> new MapRomanIntegerCache(parserCache, new CaffeineMapAdapter(caffeineCache), initializationData));
+    RomanInteger.setCache(parserCache -> new UniDirectionalRomanIntegerCache(parserCache, new CaffeineStorageAdapter(caffeineCache), initializationData));
   }
 
   @Override
