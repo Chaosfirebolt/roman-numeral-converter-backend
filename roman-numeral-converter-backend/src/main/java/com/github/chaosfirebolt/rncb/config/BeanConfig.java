@@ -1,7 +1,6 @@
 package com.github.chaosfirebolt.rncb.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.chaosfirebolt.converter.RomanInteger;
@@ -10,18 +9,12 @@ import com.github.chaosfirebolt.converter.api.initialization.source.InputSource;
 import com.github.chaosfirebolt.generator.identifier.api.IdentifierGenerator;
 import com.github.chaosfirebolt.generator.identifier.api.string.RandomUuidStringIdentifierGenerator;
 import com.github.chaosfirebolt.generator.identifier.api.string.builders.StringGeneratorBuilders;
-import com.github.chaosfirebolt.rncb.config.filter.ConversionThrottlingFilter;
-import com.github.chaosfirebolt.rncb.config.filter.RegistrationThrottlingFilter;
 import com.github.chaosfirebolt.rncb.convert.AppClockTicker;
 import com.github.chaosfirebolt.rncb.convert.RomanIntegerExpiry;
-import com.github.chaosfirebolt.rncb.storage.RequestStorage;
 import com.github.chaosfirebolt.rncb.storage.time.HourRange;
 import com.github.chaosfirebolt.rncb.storage.time.MinuteRange;
 import com.github.chaosfirebolt.rncb.storage.time.TimeRangeFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -66,30 +59,6 @@ public class BeanConfig {
   @Bean("appClock")
   public Clock applicationClock() {
     return Clock.systemUTC();
-  }
-
-  @Bean
-  @Autowired
-  public FilterRegistrationBean<RegistrationThrottlingFilter> registrationThrottlingFilter(Clock appClock, @Qualifier("reg-storage") RequestStorage requestStorage,
-                                                                                           List<TimeRangeFactory> factories, ObjectMapper mapper) {
-    FilterRegistrationBean<RegistrationThrottlingFilter> registrationBean = new FilterRegistrationBean<>();
-
-    registrationBean.setFilter(new RegistrationThrottlingFilter(appClock, requestStorage, factories, mapper));
-    registrationBean.addUrlPatterns("/app/register");
-
-    return registrationBean;
-  }
-
-  @Bean
-  @Autowired
-  public FilterRegistrationBean<ConversionThrottlingFilter> conversionThrottlingFilter(Clock appClock, @Qualifier("app-storage") RequestStorage requestStorage,
-                                                                                       List<TimeRangeFactory> factories, ObjectMapper mapper) {
-    FilterRegistrationBean<ConversionThrottlingFilter> registrationBean = new FilterRegistrationBean<>();
-
-    registrationBean.setFilter(new ConversionThrottlingFilter(appClock, requestStorage, factories, mapper));
-    registrationBean.addUrlPatterns("/convert");
-
-    return registrationBean;
   }
 
   @Bean

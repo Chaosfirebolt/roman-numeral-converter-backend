@@ -1,6 +1,13 @@
 package com.github.chaosfirebolt.rncb.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.chaosfirebolt.rncb.config.filter.ConversionThrottlingFilter;
+import com.github.chaosfirebolt.rncb.config.filter.RegistrationThrottlingFilter;
+import com.github.chaosfirebolt.rncb.storage.RequestStorage;
+import com.github.chaosfirebolt.rncb.storage.time.TimeRangeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -12,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.time.Clock;
 import java.util.List;
 
 @Configuration
@@ -40,5 +48,29 @@ public class WebSecurityConfig {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
+	}
+
+	@Bean
+	@Autowired
+	public FilterRegistrationBean<RegistrationThrottlingFilter> registrationThrottlingFilter(Clock appClock, @Qualifier("reg-storage") RequestStorage requestStorage,
+																																													 List<TimeRangeFactory> factories, ObjectMapper mapper) {
+		FilterRegistrationBean<RegistrationThrottlingFilter> registrationBean = new FilterRegistrationBean<>();
+
+		registrationBean.setFilter(new RegistrationThrottlingFilter(appClock, requestStorage, factories, mapper));
+		registrationBean.addUrlPatterns("/app/register");
+
+		return registrationBean;
+	}
+
+	@Bean
+	@Autowired
+	public FilterRegistrationBean<ConversionThrottlingFilter> conversionThrottlingFilter(Clock appClock, @Qualifier("app-storage") RequestStorage requestStorage,
+																																											 List<TimeRangeFactory> factories, ObjectMapper mapper) {
+		FilterRegistrationBean<ConversionThrottlingFilter> registrationBean = new FilterRegistrationBean<>();
+
+		registrationBean.setFilter(new ConversionThrottlingFilter(appClock, requestStorage, factories, mapper));
+		registrationBean.addUrlPatterns("/convert");
+
+		return registrationBean;
 	}
 }
